@@ -1,12 +1,13 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
+import { MapSkeleton } from "@/app/ui/skeletons";
 
 export default async function Page() {
     // This is a dynamic import of the Map component and uses the useMemo hook to memoize the component.
     const Map = useMemo(() => dynamic(
         () => import('app/ui/map'),
         {
-            loading: () => <p>A map is loading</p>,
+            loading: () => <MapSkeleton />,
             ssr: false
         }
     ), [])

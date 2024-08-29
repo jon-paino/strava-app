@@ -1,7 +1,8 @@
 'use client';
 
+import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { LatLngExpression } from 'leaflet';
+import { LatLngExpression, LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -18,29 +19,40 @@ interface MapProps {
 }
 
 const defaults = {
-    posix: [34.07238006591797, -118.45283509232104] as LatLngExpression,
+    latlong: [34.07238006591797, -118.45283509232104] as LatLngExpression,
     zoom: 19 as number,
 }
 
-const Map = (Map: MapProps) => {
-    const { zoom = defaults.zoom, latlong = defaults.posix } = Map
+const Map = (props: MapProps) => {
+    const { zoom = defaults.zoom, latlong = defaults.latlong } = props;
+    const latLngObject = L.latLng(latlong);
+    // Initialize state with the default position
+    const [markerPosition, setMarkerPosition] = useState(latLngObject);
 
+    // Handler for marker drag end event
+    const handleDragEnd = (event: any) => {
+        const newLatLng = event.target.getLatLng();
+        setMarkerPosition(newLatLng); // Update state with new position
+    };
+
+    
     return (
         <MapContainer
-            center={latlong}
+            center={markerPosition}
             zoom={zoom}
             scrollWheelZoom={true}
-            style={{ height: "100%", width: "100%" }}
+            style={{ height: "150%", width: "100%" }}
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={latlong} draggable={true}>
-                <Popup>Hey ! I study here</Popup>
+            <Marker position={markerPosition} draggable={true} eventHandlers={{ dragend: handleDragEnd }}>
+                {/* Display lat and lng from the updated position */}
+                <Popup>{`Coordinates: ${markerPosition.lat}, ${markerPosition.lng}`}</Popup>
             </Marker>
         </MapContainer>
-    )
+    );
 }
 
 export default Map;
