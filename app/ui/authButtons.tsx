@@ -23,8 +23,7 @@ export function GoogleSignInButton() {
 
 export function StravaSignInButton() {
   const handleClick = () => {
-    // signIn("strava", { callbackUrl: "/dashboard" });
-    console.log("Strava Sign In");
+    signIn("strava", { callbackUrl: "/dashboard" });
   };
 
   return (
