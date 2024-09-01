@@ -4,7 +4,7 @@ import { SessionProvider } from "next-auth/react";
 
 const SessionWrapper = ({ children }: { children: React.ReactNode }) => {
     return (
-        <SessionProvider basePath="/api/auth/signin">
+        <SessionProvider basePath="/api/auth">
             {children}
         </SessionProvider>
     );
