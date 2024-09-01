@@ -2,7 +2,7 @@ import AcmeLogo from '@/app/ui/acme-logo';
 import Link from 'next/link';
 import { lusitana } from '@/app/ui/fonts';
 import Image from 'next/image';
-import { GoogleSignInButton } from "./ui/authButtons";
+import { GoogleSignInButton, StravaSignInButton } from "./ui/authButtons";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./lib/authOptions";
 import { redirect } from "next/navigation";
@@ -23,6 +23,7 @@ export default async function Page() {
           <div className="w-full flex flex-col items-center justify-center min-h-screen py-2">
             <div className="flex flex-col items-center mt-10 p-10 shadow-md">
               <h1 className="mt-10 mb-4 text-4xl font-bold">Sign In</h1>
+              <StravaSignInButton />
               <GoogleSignInButton />
             </div>
           </div>
