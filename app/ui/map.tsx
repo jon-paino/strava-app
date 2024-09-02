@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import { LatLngExpression, LatLng } from 'leaflet';
+import polyline from '@mapbox/polyline';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+
+import { useSession } from 'next-auth/react';
 
 // The paths to the images from leaflet are not correct, so we need to set them manually
 L.Icon.Default.mergeOptions({
@@ -26,8 +29,34 @@ const defaults = {
 const Map = (props: MapProps) => {
     const { zoom = defaults.zoom, latlong = defaults.latlong } = props;
     const latLngObject = L.latLng(latlong);
-    // Initialize state with the default position
     const [markerPosition, setMarkerPosition] = useState(latLngObject);
+    const [activityPolylines, setActivityPolylines] = useState<LatLng[][]>([]);
+    const { data: session } = useSession();
+    console.log('session:', session);
+    // Fetch activities and set polylines when the component mounts
+    useEffect(() => {
+        const fetchActivities = async () => {
+            const accessToken = session?.accessToken as string | undefined;
+            if (!accessToken) return;
+
+            try {
+                const response = await fetch(`https://www.strava.com/api/v3/athlete/activities?access_token=${accessToken}`);
+                const data = await response.json();
+
+                // Decode each activity's polyline and set it to state
+                const polylines = data.map((activity: any) => {
+                    const encodedPolyline = activity.map.summary_polyline;
+                    return polyline.decode(encodedPolyline);
+                });
+
+                setActivityPolylines(polylines);
+            } catch (error) {
+                console.error('Error fetching activities:', error);
+            }
+        };
+
+        fetchActivities();
+    }, [session]);
 
     // Handler for marker drag end event
     const handleDragEnd = (event: any) => {
@@ -35,22 +64,26 @@ const Map = (props: MapProps) => {
         setMarkerPosition(newLatLng); // Update state with new position
     };
 
-    
+
     return (
         <MapContainer
             center={markerPosition}
             zoom={zoom}
             scrollWheelZoom={true}
-            style={{ height: "150%", width: "100%" }}
+            style={{ height: "100vh", width: "100%" }}
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <Marker position={markerPosition} draggable={true} eventHandlers={{ dragend: handleDragEnd }}>
-                {/* Display lat and lng from the updated position */}
                 <Popup>{`Coordinates: ${markerPosition.lat}, ${markerPosition.lng}`}</Popup>
             </Marker>
+            
+            {/* Render a polyline for each activity */}
+            {activityPolylines.map((polylineCoords, index) => (
+                <Polyline key={index} positions={polylineCoords} color='blue' weight={4} opacity={0.7} />
+            ))}
         </MapContainer>
     );
 }
