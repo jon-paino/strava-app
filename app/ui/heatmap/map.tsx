@@ -31,7 +31,8 @@ const Map = (props: MapProps) => {
     const latLngObject = L.latLng(latlong);
     const [markerPosition, setMarkerPosition] = useState(latLngObject);
     const [activityPolylines, setActivityPolylines] = useState<LatLng[][]>([]);
-    const [selectedTypes, setSelectedTypes] = useState<string[]>(['run', 'swim', 'ride']); // Default to all 
+    const [selectedTypes, setSelectedTypes] = useState<string[]>(['run', 'swim', 'ride']);
+    const [runFilters, setRunFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
     const { data: session } = useSession();
     console.log('session:', session);
 
@@ -42,7 +43,7 @@ const Map = (props: MapProps) => {
             if (!accessToken) return;
 
             let page = 1;
-            const perPage = 100;
+            const perPage = 200;
             let allActivities: any[] = [];
             let hasMoreActivities = true;
 
@@ -59,15 +60,23 @@ const Map = (props: MapProps) => {
                     }
                 }
 
-                // Filter activities based on selected types
-                const filteredActivities = allActivities.filter((activity: any) =>
-                    selectedTypes.includes(activity.type.toLowerCase())
-                );
+                // Filter activities based on selected types and run-specific filters
+                const filteredActivities = allActivities.filter((activity: any) => {
+                    const isTypeSelected = selectedTypes.includes(activity.type.toLowerCase());
+                    const isRunFilterPassed = activity.type.toLowerCase() === 'run' ? (
+                        (!runFilters.duration || (activity.elapsed_time / 60 >= runFilters.duration)) &&
+                        (!runFilters.mph || (activity.average_speed * 2.23694 >= runFilters.mph)) &&
+                        (!runFilters.miles || (activity.distance / 1609.34 >= runFilters.miles))
+                    ) : true;
+
+                    return isTypeSelected && isRunFilterPassed;
+                });
+
 
                 // Decode each activity's polyline and store it
                 const polylines = filteredActivities.map((activity: any) => {
                     const encodedPolyline = activity.map.summary_polyline;
-                    return encodedPolyline 
+                    return encodedPolyline
                         ? polyline.decode(encodedPolyline).map(([lat, lng]) => new LatLng(lat, lng))
                         : [];
                 });
@@ -79,7 +88,7 @@ const Map = (props: MapProps) => {
         };
 
         fetchAllActivities();
-    }, [session, selectedTypes]);
+    }, [session, selectedTypes, runFilters]);
 
     // Handler for marker drag end event
     const handleDragEnd = (event: any) => {
@@ -90,7 +99,11 @@ const Map = (props: MapProps) => {
 
     return (
         <div style={{ display: 'flex' }}>
-            <Filter selectedTypes={selectedTypes} onFilterChange={setSelectedTypes} />
+            <Filter
+                selectedTypes={selectedTypes}
+                onFilterChange={setSelectedTypes}
+                onRunFilterChange={setRunFilters}
+            />
             <MapContainer
                 center={markerPosition}
                 zoom={zoom}
@@ -104,7 +117,7 @@ const Map = (props: MapProps) => {
                 <Marker position={markerPosition} draggable={true} eventHandlers={{ dragend: handleDragEnd }}>
                     <Popup>{`Coordinates: ${markerPosition.lat}, ${markerPosition.lng}`}</Popup>
                 </Marker>
-                
+
                 {/* Render a polyline for each activity */}
                 {activityPolylines.map((polylineCoords, index) => (
                     <Polyline key={index} positions={polylineCoords} color='blue' weight={4} opacity={0.7} />

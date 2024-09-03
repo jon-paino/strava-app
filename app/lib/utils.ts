@@ -67,3 +67,32 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
+/**
+ * Converts seconds to minutes.
+ * @param seconds - The number of seconds.
+ * @returns The equivalent number of minutes.
+ */
+export function secondsToMinutes(seconds: number): number {
+  return seconds / 60;
+}
+
+/**
+* Converts meters to miles.
+* @param meters - The number of meters.
+* @returns The equivalent number of miles.
+*/
+export function metersToMiles(meters: number): number {
+  const metersPerMile = 1609.34;
+  return meters / metersPerMile;
+}
+
+/**
+* Converts kilometers per hour (km/h) to miles per hour (mph).
+* @param kmh - The speed in kilometers per hour.
+* @returns The equivalent speed in miles per hour.
+*/
+export function kmhToMph(kmh: number): number {
+  const conversionFactor = 0.621371;
+  return kmh * conversionFactor;
+}
