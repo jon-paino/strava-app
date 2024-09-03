@@ -33,6 +33,8 @@ const Map = (props: MapProps) => {
     const [activityPolylines, setActivityPolylines] = useState<LatLng[][]>([]);
     const [selectedTypes, setSelectedTypes] = useState<string[]>(['run', 'swim', 'ride']);
     const [runFilters, setRunFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
+    const [rideFilters, setRideFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
+    const [swimFilters, setSwimFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
     const { data: session } = useSession();
     console.log('session:', session);
 
@@ -60,16 +62,29 @@ const Map = (props: MapProps) => {
                     }
                 }
 
-                // Filter activities based on selected types and run-specific filters
+                // Filter activities based on selected types and specific filters
                 const filteredActivities = allActivities.filter((activity: any) => {
                     const isTypeSelected = selectedTypes.includes(activity.type.toLowerCase());
+
                     const isRunFilterPassed = activity.type.toLowerCase() === 'run' ? (
                         (!runFilters.duration || (activity.elapsed_time / 60 >= runFilters.duration)) &&
                         (!runFilters.mph || (activity.average_speed * 2.23694 >= runFilters.mph)) &&
                         (!runFilters.miles || (activity.distance / 1609.34 >= runFilters.miles))
                     ) : true;
 
-                    return isTypeSelected && isRunFilterPassed;
+                    const isRideFilterPassed = activity.type.toLowerCase() === 'ride' ? (
+                        (!rideFilters.duration || (activity.elapsed_time / 60 >= rideFilters.duration)) &&
+                        (!rideFilters.mph || (activity.average_speed * 2.23694 >= rideFilters.mph)) &&
+                        (!rideFilters.miles || (activity.distance / 1609.34 >= rideFilters.miles))
+                    ) : true;
+
+                    const isSwimFilterPassed = activity.type.toLowerCase() === 'swim' ? (
+                        (!swimFilters.duration || (activity.elapsed_time / 60 >= swimFilters.duration)) &&
+                        (!swimFilters.mph || (activity.average_speed * 2.23694 >= swimFilters.mph)) &&
+                        (!swimFilters.miles || (activity.distance / 1609.34 >= swimFilters.miles))
+                    ) : true;
+
+                    return isTypeSelected && isRunFilterPassed && isRideFilterPassed && isSwimFilterPassed;
                 });
 
 
@@ -88,7 +103,7 @@ const Map = (props: MapProps) => {
         };
 
         fetchAllActivities();
-    }, [session, selectedTypes, runFilters]);
+    }, [session, selectedTypes, runFilters, rideFilters, swimFilters]);
 
     // Handler for marker drag end event
     const handleDragEnd = (event: any) => {
@@ -98,33 +113,40 @@ const Map = (props: MapProps) => {
 
 
     return (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+            <div style={{ width: '20%', padding: '10px', boxSizing: 'border-box', overflowY: 'auto' }}>
             <Filter
                 selectedTypes={selectedTypes}
                 onFilterChange={setSelectedTypes}
                 onRunFilterChange={setRunFilters}
+                onRideFilterChange={setRideFilters}
+                onSwimFilterChange={setSwimFilters}
             />
-            <MapContainer
-                center={markerPosition}
-                zoom={zoom}
-                scrollWheelZoom={true}
-                style={{ height: "80vh", width: "60vw" }}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Marker position={markerPosition} draggable={true} eventHandlers={{ dragend: handleDragEnd }}>
-                    <Popup>{`Coordinates: ${markerPosition.lat}, ${markerPosition.lng}`}</Popup>
-                </Marker>
+            </div>
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+                <MapContainer
+                    center={markerPosition}
+                    zoom={zoom}
+                    scrollWheelZoom={true}
+                    style={{ height: '80%', width: '60%' }}
+                >
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <Marker position={markerPosition} draggable={true} eventHandlers={{ dragend: handleDragEnd }}>
+                        <Popup>{`Coordinates: ${markerPosition.lat}, ${markerPosition.lng}`}</Popup>
+                    </Marker>
 
-                {/* Render a polyline for each activity */}
-                {activityPolylines.map((polylineCoords, index) => (
-                    <Polyline key={index} positions={polylineCoords} color='blue' weight={4} opacity={0.7} />
-                ))}
-            </MapContainer>
+                    {/* Render a polyline for each activity */}
+                    {activityPolylines.map((polylineCoords, index) => (
+                        <Polyline key={index} positions={polylineCoords} color="blue" weight={4} opacity={0.7} />
+                    ))}
+                </MapContainer>
+            </div>
         </div>
     );
-}
+};
+
 
 export default Map;
