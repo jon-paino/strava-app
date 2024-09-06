@@ -13,8 +13,8 @@ import clsx from 'clsx';
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
   {
-    name: 'Invoices',
-    href: '/dashboard/invoices',
+    name: 'Data Overview',
+    href: '/dashboard/data-overview',
     icon: DocumentDuplicateIcon,
   },
   { name: 'Heat Map', href: '/dashboard/heatmap', icon: MapIcon },

@@ -2,6 +2,16 @@
 // It describes the shape of the data, and what data type each property should accept.
 // For simplicity of teaching, we're manually defining these types.
 // However, these types are generated automatically if you're using an ORM such as Prisma.
+
+// Inside /app/lib/definitions.ts or another location in your project
+export interface FormattedActivity {
+  id: string;
+  type: string;
+  distance: number; // In meters
+  duration: number; // In seconds
+  date: string; // Activity date
+}
+
 export type User = {
   id: string;
   name: string;

@@ -62,7 +62,7 @@ const Map = (props: MapProps) => {
                         page++;
                     }
                 }
-    
+                console.log(activities);
                 setAllActivities(activities); // Store all activities once
             } catch (error) {
                 console.error('Error fetching activities:', error);

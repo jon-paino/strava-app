@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { MapSkeleton } from "@/app/ui/skeletons";
+import { getActivities } from "@/app/lib/actions";
 
 export default async function Page() {
     // This is a dynamic import of the Map component and uses the useMemo hook to memoize the component.
