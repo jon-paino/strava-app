@@ -52,7 +52,17 @@ const Filter = ({
         }
     };
 
-    // Debounce slider updates for run, ride, and swim
+    const handleInputChange = (filterName: string, value: string, activityType: string) => {
+        const numericValue = Number(value.replace(/^0+/, '')); // Remove leading zeros
+        if (activityType === 'run') {
+            setRunFilters(prev => ({ ...prev, [filterName]: numericValue }));
+        } else if (activityType === 'ride') {
+            setRideFilters(prev => ({ ...prev, [filterName]: numericValue }));
+        } else if (activityType === 'swim') {
+            setSwimFilters(prev => ({ ...prev, [filterName]: numericValue }));
+        }
+    };
+
     useEffect(() => {
         const debounceTimeout = setTimeout(() => {
             onRunFilterChange(runFilters);
@@ -78,129 +88,213 @@ const Filter = ({
     }, [swimFilters, onSwimFilterChange]);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-            <label>
+        <div className="flex flex-col items-start gap-4">
+            <label className="flex items-center">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('run')}
                     onChange={() => handleCheckboxChange('run')}
+                    className="mr-2"
                 />
                 Run
             </label>
             {runFiltersVisible && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginLeft: '20px' }}>
-                    <label>
-                        Duration (min): {runFilters.duration || 0}
+                <div className="flex flex-col gap-4 ml-5">
+                    <label className="flex items-center">
+                        Duration (min): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="300"
+                            value={runFilters.duration || ''}
+                            onChange={(e) => handleInputChange('duration', e.target.value, 'run')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
                             max="300"
                             value={runFilters.duration || 0}
                             onChange={(e) => handleSliderChange('duration', Number(e.target.value), 'run')}
+                            className="w-full"
                         />
                     </label>
-                    <label>
-                        Speed (mph): {runFilters.mph || 0}
+                    <label className="flex items-center">
+                        Speed (mph): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="20"
+                            value={runFilters.mph || ''}
+                            onChange={(e) => handleInputChange('mph', e.target.value, 'run')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
                             max="20"
                             value={runFilters.mph || 0}
                             onChange={(e) => handleSliderChange('mph', Number(e.target.value), 'run')}
+                            className="w-full"
                         />
                     </label>
-                    <label>
-                        Distance (miles): {runFilters.miles || 0}
+                    <label className="flex items-center">
+                        Distance (miles): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="50"
+                            value={runFilters.miles || ''}
+                            onChange={(e) => handleInputChange('miles', e.target.value, 'run')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
                             max="50"
                             value={runFilters.miles || 0}
                             onChange={(e) => handleSliderChange('miles', Number(e.target.value), 'run')}
+                            className="w-full"
                         />
                     </label>
                 </div>
             )}
-            <label>
+            <label className="flex items-center">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('ride')}
                     onChange={() => handleCheckboxChange('ride')}
+                    className="mr-2"
                 />
                 Ride
             </label>
             {rideFiltersVisible && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginLeft: '20px' }}>
-                    <label>
-                        Duration (min): {rideFilters.duration || 0}
+                <div className="flex flex-col gap-4 ml-5">
+                    <label className="flex items-center">
+                        Duration (min): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="300"
+                            value={rideFilters.duration || ''}
+                            onChange={(e) => handleInputChange('duration', e.target.value, 'ride')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
                             max="300"
                             value={rideFilters.duration || 0}
                             onChange={(e) => handleSliderChange('duration', Number(e.target.value), 'ride')}
+                            className="w-full"
                         />
                     </label>
-                    <label>
-                        Speed (mph): {rideFilters.mph || 0}
+                    <label className="flex items-center">
+                        Speed (mph): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="20"
+                            value={rideFilters.mph || ''}
+                            onChange={(e) => handleInputChange('mph', e.target.value, 'ride')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
-                            max="40"
+                            max="20"
                             value={rideFilters.mph || 0}
                             onChange={(e) => handleSliderChange('mph', Number(e.target.value), 'ride')}
+                            className="w-full"
                         />
                     </label>
-                    <label>
-                        Distance (miles): {rideFilters.miles || 0}
+                    <label className="flex items-center">
+                        Distance (miles): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="50"
+                            value={rideFilters.miles || ''}
+                            onChange={(e) => handleInputChange('miles', e.target.value, 'ride')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
-                            max="100"
+                            max="50"
                             value={rideFilters.miles || 0}
                             onChange={(e) => handleSliderChange('miles', Number(e.target.value), 'ride')}
+                            className="w-full"
                         />
                     </label>
                 </div>
             )}
-            <label>
+            <label className="flex items-center">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('swim')}
                     onChange={() => handleCheckboxChange('swim')}
+                    className="mr-2"
                 />
                 Swim
             </label>
             {swimFiltersVisible && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginLeft: '20px' }}>
-                    <label>
-                        Duration (min): {swimFilters.duration || 0}
+                <div className="flex flex-col gap-4 ml-5">
+                    <label className="flex items-center">
+                        Duration (min): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="300"
+                            value={swimFilters.duration || ''}
+                            onChange={(e) => handleInputChange('duration', e.target.value, 'swim')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
-                            max="120"
+                            max="300"
                             value={swimFilters.duration || 0}
                             onChange={(e) => handleSliderChange('duration', Number(e.target.value), 'swim')}
+                            className="w-full"
                         />
                     </label>
-                    <label>
-                        Speed (mph): {swimFilters.mph || 0}
+                    <label className="flex items-center">
+                        Speed (mph): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="20"
+                            value={swimFilters.mph || ''}
+                            onChange={(e) => handleInputChange('mph', e.target.value, 'swim')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
-                            max="10"
+                            max="20"
                             value={swimFilters.mph || 0}
                             onChange={(e) => handleSliderChange('mph', Number(e.target.value), 'swim')}
+                            className="w-full"
                         />
                     </label>
-                    <label>
-                        Distance (miles): {swimFilters.miles || 0}
+                    <label className="flex items-center">
+                        Distance (miles): 
+                        <input
+                            type="number"
+                            min="0"
+                            max="50"
+                            value={swimFilters.miles || ''}
+                            onChange={(e) => handleInputChange('miles', e.target.value, 'swim')}
+                            className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                        />
                         <input
                             type="range"
                             min="0"
-                            max="5"
+                            max="50"
                             value={swimFilters.miles || 0}
                             onChange={(e) => handleSliderChange('miles', Number(e.target.value), 'swim')}
+                            className="w-full"
                         />
                     </label>
                 </div>
