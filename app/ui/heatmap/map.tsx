@@ -35,75 +35,88 @@ const Map = (props: MapProps) => {
     const [runFilters, setRunFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
     const [rideFilters, setRideFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
     const [swimFilters, setSwimFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
+    const [allActivities, setAllActivities] = useState<any[]>([]); // Store all fetched activities
+    const [filteredActivities, setFilteredActivities] = useState<any[]>([]); // Store filtered activities
     const { data: session } = useSession();
     console.log('session:', session);
 
-    // Fetch all activities when the component mounts
     useEffect(() => {
         const fetchAllActivities = async () => {
             const accessToken = session?.accessToken as string | undefined;
             if (!accessToken) return;
-
+    
             let page = 1;
             const perPage = 200;
-            let allActivities: any[] = [];
+            let activities: any[] = [];
             let hasMoreActivities = true;
-
+    
             try {
                 while (hasMoreActivities) {
                     const response = await fetch(`https://www.strava.com/api/v3/athlete/activities?access_token=${accessToken}&page=${page}&per_page=${perPage}`);
                     const data = await response.json();
-
+    
                     if (data.length === 0) {
                         hasMoreActivities = false;
                     } else {
-                        allActivities = allActivities.concat(data);
+                        activities = activities.concat(data);
                         page++;
                     }
                 }
-
-                // Filter activities based on selected types and specific filters
-                const filteredActivities = allActivities.filter((activity: any) => {
-                    const isTypeSelected = selectedTypes.includes(activity.type.toLowerCase());
-
-                    const isRunFilterPassed = activity.type.toLowerCase() === 'run' ? (
-                        (!runFilters.duration || (activity.elapsed_time / 60 >= runFilters.duration)) &&
-                        (!runFilters.mph || (activity.average_speed * 2.23694 >= runFilters.mph)) &&
-                        (!runFilters.miles || (activity.distance / 1609.34 >= runFilters.miles))
-                    ) : true;
-
-                    const isRideFilterPassed = activity.type.toLowerCase() === 'ride' ? (
-                        (!rideFilters.duration || (activity.elapsed_time / 60 >= rideFilters.duration)) &&
-                        (!rideFilters.mph || (activity.average_speed * 2.23694 >= rideFilters.mph)) &&
-                        (!rideFilters.miles || (activity.distance / 1609.34 >= rideFilters.miles))
-                    ) : true;
-
-                    const isSwimFilterPassed = activity.type.toLowerCase() === 'swim' ? (
-                        (!swimFilters.duration || (activity.elapsed_time / 60 >= swimFilters.duration)) &&
-                        (!swimFilters.mph || (activity.average_speed * 2.23694 >= swimFilters.mph)) &&
-                        (!swimFilters.miles || (activity.distance / 1609.34 >= swimFilters.miles))
-                    ) : true;
-
-                    return isTypeSelected && isRunFilterPassed && isRideFilterPassed && isSwimFilterPassed;
-                });
-
-
-                // Decode each activity's polyline and store it
-                const polylines = filteredActivities.map((activity: any) => {
-                    const encodedPolyline = activity.map.summary_polyline;
-                    return encodedPolyline
-                        ? polyline.decode(encodedPolyline).map(([lat, lng]) => new LatLng(lat, lng))
-                        : [];
-                });
-
-                setActivityPolylines(polylines);
+    
+                setAllActivities(activities); // Store all activities once
             } catch (error) {
                 console.error('Error fetching activities:', error);
             }
         };
-
+    
         fetchAllActivities();
-    }, [session, selectedTypes, runFilters, rideFilters, swimFilters]);
+    }, [session]); // Only fetch once when session is available
+    
+    // Apply client-side filtering based on selected types and filters
+    useEffect(() => {
+        const applyFilters = () => {
+            const filtered = allActivities.filter((activity) => {
+                const isTypeSelected = selectedTypes.includes(activity.type.toLowerCase());
+    
+                const isRunFilterPassed = activity.type.toLowerCase() === 'run' ? (
+                    (!runFilters.duration || (activity.elapsed_time / 60 >= runFilters.duration)) &&
+                    (!runFilters.mph || (activity.average_speed * 2.23694 >= runFilters.mph)) &&
+                    (!runFilters.miles || (activity.distance / 1609.34 >= runFilters.miles))
+                ) : true;
+    
+                const isRideFilterPassed = activity.type.toLowerCase() === 'ride' ? (
+                    (!rideFilters.duration || (activity.elapsed_time / 60 >= rideFilters.duration)) &&
+                    (!rideFilters.mph || (activity.average_speed * 2.23694 >= rideFilters.mph)) &&
+                    (!rideFilters.miles || (activity.distance / 1609.34 >= rideFilters.miles))
+                ) : true;
+    
+                const isSwimFilterPassed = activity.type.toLowerCase() === 'swim' ? (
+                    (!swimFilters.duration || (activity.elapsed_time / 60 >= swimFilters.duration)) &&
+                    (!swimFilters.mph || (activity.average_speed * 2.23694 >= swimFilters.mph)) &&
+                    (!swimFilters.miles || (activity.distance / 1609.34 >= swimFilters.miles))
+                ) : true;
+    
+                return isTypeSelected && isRunFilterPassed && isRideFilterPassed && isSwimFilterPassed;
+            });
+    
+            setFilteredActivities(filtered);
+        };
+    
+        applyFilters();
+    }, [allActivities, selectedTypes, runFilters, rideFilters, swimFilters]); // Apply filters only when the filters change
+    
+    // Decode polylines for filtered activities
+    useEffect(() => {
+        const polylines = filteredActivities.map((activity) => {
+            const encodedPolyline = activity.map.summary_polyline;
+            return encodedPolyline
+                ? polyline.decode(encodedPolyline).map(([lat, lng]) => new LatLng(lat, lng))
+                : [];
+        });
+    
+        setActivityPolylines(polylines);
+    }, [filteredActivities]);
+    
 
     // Handler for marker drag end event
     const handleDragEnd = (event: any) => {
