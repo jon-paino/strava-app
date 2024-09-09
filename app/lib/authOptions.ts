@@ -4,7 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import StravaProvider from "next-auth/providers/strava";
 import { Client } from 'pg';
 import { fetchStravaUserData, updateStravaUserData } from './actions';
-import { getActivities, insertActivitiesIntoDatabase, getUpdatedActivities } from "./actions";
+import {insertActivitiesIntoDatabase, getUpdatedActivities } from "./actions";
+import { getActivities } from "./client_actions";
 
 export const authOptions: NextAuthOptions = {
   providers: [

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import AthleteActivityTable from "@/app/ui/data-overview/table";
-import { getActivities } from "@/app/lib/actions";
+import { getActivities } from "@/app/lib/client_actions";
 import { useSession } from 'next-auth/react';
 import { FormattedActivity } from '@/app/lib/definitions';
 import Pagination from '@/app/ui/data-overview/pagination';
