@@ -27,8 +27,9 @@ export default function Page() {
           id: activity.id,
           type: activity.type, 
           distance: activity.distance,
-          duration: activity.moving_time, 
-          date: activity.start_date, 
+          duration: activity.moving_time,
+          elevation: activity.total_elevation_gain,
+          date: activity.start_date,
         }));
 
         setActivities(formattedActivities);

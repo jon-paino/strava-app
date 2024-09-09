@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import StravaProvider from "next-auth/providers/strava";
 import { Client } from 'pg';
 import { fetchStravaUserData, updateStravaUserData } from './actions';
+import { getActivities, insertActivitiesIntoDatabase, getUpdatedActivities } from "./actions";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -59,6 +60,8 @@ export const authOptions: NextAuthOptions = {
               const userData = await fetchStravaUserData(account.access_token);
               // Update user data in PostgreSQL
               await updateStravaUserData(client, userData);
+              const activities = await getActivities(account.access_token);
+              await insertActivitiesIntoDatabase(activities, stravaId);
             } else {
               console.error('Error: Access token is undefined.');
             }
@@ -74,6 +77,12 @@ export const authOptions: NextAuthOptions = {
                WHERE id = $4`,
               [account.access_token, account.refresh_token, account.expires_at, stravaId]
             );
+            if (account.access_token) {
+              // Fetch and update new activities since last sync
+              const lastSyncedAt = user.rows[0].last_synced_at;
+              const updatedActivities = await getUpdatedActivities(account.access_token, lastSyncedAt);
+              await insertActivitiesIntoDatabase(updatedActivities, stravaId);
+            }
           }
         } catch (error) {
           console.error('Error interacting with the database:', error);

@@ -48,6 +48,9 @@ export default function AthleteActivityTable({
                     <th scope="col" className="px-3 py-5 font-medium">
                       Duration (sec)
                     </th>
+                    <th scope="col" className="px-3 py-5 font-medium">
+                      Elevation (m)
+                    </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Date
                     </th>
