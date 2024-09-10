@@ -1,5 +1,6 @@
 import { Client } from 'pg';
 import { StravaUser } from '@/types/types';
+import { Activity } from './definitions';
 
 export async function insertActivitiesIntoDatabase(activities: any[], userId: number) {
   const client = new Client({
@@ -21,9 +22,9 @@ export async function insertActivitiesIntoDatabase(activities: any[], userId: nu
         return client.query(
           `INSERT INTO strava.activities (
             id, user_id, name, distance, moving_time, elapsed_time, total_elevation_gain,
-            type, start_date, timezone, achievement_count, kudos_count, comment_count, athlete_count
+            type, start_date, timezone, achievement_count, kudos_count, comment_count, athlete_count, summary_polyline
           ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
           )`,
           [
             activity.id,
@@ -40,6 +41,7 @@ export async function insertActivitiesIntoDatabase(activities: any[], userId: nu
             activity.kudos_count || 0,
             activity.comment_count || 0,
             activity.athlete_count || 0,
+            activity.map?.summary_polyline || null
           ]
         );
       } else {
@@ -127,3 +129,5 @@ export async function updateStravaUserData(client: Client, userData: StravaUser)
     console.error('Error updating user data:', (error as Error).message);
   }
 }
+
+

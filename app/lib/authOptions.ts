@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import StravaProvider from "next-auth/providers/strava";
 import { Client } from 'pg';
 import { fetchStravaUserData, updateStravaUserData } from './actions';
-import {insertActivitiesIntoDatabase, getUpdatedActivities } from "./actions";
+import {insertActivitiesIntoDatabase } from "./actions";
 import { getActivities } from "./client_actions";
 
 export const authOptions: NextAuthOptions = {
@@ -48,14 +48,12 @@ export const authOptions: NextAuthOptions = {
             [stravaId]
           );
           if (user.rows.length === 0) {
-            console.log('user: ', user.rows);
             // If user doesn't exist, insert them into the database
             await client.query(
               `INSERT INTO strava.users (id, access_token, refresh_token, expires_at, created_at)
                VALUES ($1, $2, $3, $4, now())`,
               [stravaId, account.access_token, account.refresh_token, account.expires_at]
             );
-            console.log('user: ', user.rows);
             if (account.access_token) {
               // Fetch user data from Strava API
               const userData = await fetchStravaUserData(account.access_token);
@@ -66,7 +64,6 @@ export const authOptions: NextAuthOptions = {
             } else {
               console.error('Error: Access token is undefined.');
             }
-            console.log('user: ', user.rows);
           } else {
             // If user exists, update their tokens
             await client.query(

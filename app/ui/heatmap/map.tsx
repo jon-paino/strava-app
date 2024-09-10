@@ -42,34 +42,26 @@ const Map = (props: MapProps) => {
 
     useEffect(() => {
         const fetchAllActivities = async () => {
-            const accessToken = session?.accessToken as string | undefined;
-            if (!accessToken) return;
-    
-            let page = 1;
-            const perPage = 200;
-            let activities: any[] = [];
-            let hasMoreActivities = true;
+            const userId = session?.stravaId as number | undefined;
+            if (!userId) return;
     
             try {
-                while (hasMoreActivities) {
-                    const response = await fetch(`https://www.strava.com/api/v3/athlete/activities?access_token=${accessToken}&page=${page}&per_page=${perPage}`);
-                    const data = await response.json();
-    
-                    if (data.length === 0) {
-                        hasMoreActivities = false;
-                    } else {
-                        activities = activities.concat(data);
-                        page++;
-                    }
+                // Fetch activities from your custom API route
+                const response = await fetch(`/api/activities?userId=${userId}`);
+                const data = await response.json();
+                if (response.ok) {
+                    setAllActivities(data.activities); // Store fetched activities in state
+                } else {
+                    console.error('Error fetching activities from database:', data.error);
                 }
-                console.log(activities);
-                setAllActivities(activities); // Store all activities once
             } catch (error) {
                 console.error('Error fetching activities:', error);
             }
         };
     
-        fetchAllActivities();
+        if (session) {
+            fetchAllActivities();
+        }
     }, [session]); // Only fetch once when session is available
     
     // Apply client-side filtering based on selected types and filters
@@ -108,7 +100,7 @@ const Map = (props: MapProps) => {
     // Decode polylines for filtered activities
     useEffect(() => {
         const polylines = filteredActivities.map((activity) => {
-            const encodedPolyline = activity.map.summary_polyline;
+            const encodedPolyline = activity.summary_polyline;
             return encodedPolyline
                 ? polyline.decode(encodedPolyline).map(([lat, lng]) => new LatLng(lat, lng))
                 : [];
