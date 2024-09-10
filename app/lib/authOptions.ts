@@ -78,12 +78,6 @@ export const authOptions: NextAuthOptions = {
                WHERE id = $4`,
               [account.access_token, account.refresh_token, account.expires_at, stravaId]
             );
-            if (account.access_token) {
-              // Fetch and update new activities since last sync
-              const lastSyncedAt = user.rows[0].last_synced_at;
-              const updatedActivities = await getUpdatedActivities(account.access_token, lastSyncedAt);
-              await insertActivitiesIntoDatabase(updatedActivities, stravaId);
-            }
           }
         } catch (error) {
           console.error('Error interacting with the database:', error);
