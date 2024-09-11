@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import AthleteActivityTable from "@/app/ui/data-overview/table";
 import { getActivities } from "@/app/lib/client_actions";
 import { useSession } from 'next-auth/react';
-import { FormattedActivity } from '@/app/lib/definitions';
+import { Activity, FormattedActivity } from '@/app/lib/definitions';
 import Pagination from '@/app/ui/data-overview/pagination';
 
 export default function Page() {
@@ -20,19 +20,26 @@ export default function Page() {
       if (!session?.accessToken) return;
 
       try {
-        const rawActivities = await getActivities(session.accessToken);
-        
+        const userId = session?.stravaId as number | undefined;
+        if (!userId) return;
+        const response = await fetch(`/api/activities?userId=${userId}`);
+        const result = await response.json(); // Assuming the API response is an object like { activities: [...] }
+
+        // Check if the activities field exists and is an array
+        const rawActivities = result.activities;
+
         // Map the raw activity data to FormattedActivity structure
         const formattedActivities = rawActivities.map((activity: any) => ({
           id: activity.id,
-          type: activity.type, 
+          type: activity.type,
           distance: activity.distance,
           duration: activity.moving_time,
           elevation: activity.total_elevation_gain,
-          date: activity.start_date,
+          date: new Date(activity.start_date),
         }));
+        const sortedActivities = formattedActivities.sort((a: FormattedActivity, b: FormattedActivity) => b.date.getTime() - a.date.getTime());
 
-        setActivities(formattedActivities);
+        setActivities(sortedActivities);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching activities:', error);

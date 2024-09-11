@@ -10,7 +10,7 @@ export interface FormattedActivity {
   distance: number; // In meters
   duration: number; // In seconds
   elevation: number; // In meters
-  date: string; // Activity date
+  date: Date; // Activity date
 }
 
 export interface Activity {

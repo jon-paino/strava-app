@@ -70,6 +70,9 @@ export default function AthleteActivityTable({
                         {activity.duration}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {activity.elevation}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {new Date(activity.date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
