@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
 
         // Execute the query
         const result = await client.query(query, [userId]);
-        console.log('Fetched activities:', result.rows);
         // Return activities as JSON
         return NextResponse.json({ activities: result.rows });
     } catch (error) {

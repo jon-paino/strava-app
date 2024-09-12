@@ -15,9 +15,9 @@ const Filter = ({
     onRideFilterChange,
     onSwimFilterChange,
 }: FilterProps) => {
-    const [runFiltersVisible, setRunFiltersVisible] = useState(false);
-    const [rideFiltersVisible, setRideFiltersVisible] = useState(false);
-    const [swimFiltersVisible, setSwimFiltersVisible] = useState(false);
+    const [runFiltersVisible, setRunFiltersVisible] = useState(true);
+    const [rideFiltersVisible, setRideFiltersVisible] = useState(true);
+    const [swimFiltersVisible, setSwimFiltersVisible] = useState(true);
 
     const [runFilters, setRunFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
     const [rideFilters, setRideFilters] = useState<{ duration?: number; mph?: number; miles?: number }>({});
@@ -89,19 +89,18 @@ const Filter = ({
 
     return (
         <div className="flex flex-col items-start gap-4">
-            <label className="flex items-center">
+            <label className="checkbox-button">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('run')}
                     onChange={() => handleCheckboxChange('run')}
-                    className="mr-2"
                 />
                 Run
             </label>
             {runFiltersVisible && (
                 <div className="flex flex-col gap-4 ml-5">
                     <label className="flex items-center">
-                        Duration (min): 
+                        Duration (min):
                         <input
                             type="number"
                             min="0"
@@ -120,7 +119,7 @@ const Filter = ({
                         />
                     </label>
                     <label className="flex items-center">
-                        Speed (mph): 
+                        Speed (mph):
                         <input
                             type="number"
                             min="0"
@@ -139,7 +138,7 @@ const Filter = ({
                         />
                     </label>
                     <label className="flex items-center">
-                        Distance (miles): 
+                        Distance (miles):
                         <input
                             type="number"
                             min="0"
@@ -159,19 +158,18 @@ const Filter = ({
                     </label>
                 </div>
             )}
-            <label className="flex items-center">
+            <label className="checkbox-button">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('ride')}
                     onChange={() => handleCheckboxChange('ride')}
-                    className="mr-2"
                 />
                 Ride
             </label>
             {rideFiltersVisible && (
                 <div className="flex flex-col gap-4 ml-5">
                     <label className="flex items-center">
-                        Duration (min): 
+                        Duration (min):
                         <input
                             type="number"
                             min="0"
@@ -190,7 +188,7 @@ const Filter = ({
                         />
                     </label>
                     <label className="flex items-center">
-                        Speed (mph): 
+                        Speed (mph):
                         <input
                             type="number"
                             min="0"
@@ -209,7 +207,7 @@ const Filter = ({
                         />
                     </label>
                     <label className="flex items-center">
-                        Distance (miles): 
+                        Distance (miles):
                         <input
                             type="number"
                             min="0"
@@ -229,19 +227,18 @@ const Filter = ({
                     </label>
                 </div>
             )}
-            <label className="flex items-center">
+            <label className="checkbox-button">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('swim')}
                     onChange={() => handleCheckboxChange('swim')}
-                    className="mr-2"
                 />
                 Swim
             </label>
             {swimFiltersVisible && (
                 <div className="flex flex-col gap-4 ml-5">
                     <label className="flex items-center">
-                        Duration (min): 
+                        Duration (min):
                         <input
                             type="number"
                             min="0"
@@ -260,7 +257,7 @@ const Filter = ({
                         />
                     </label>
                     <label className="flex items-center">
-                        Speed (mph): 
+                        Speed (mph):
                         <input
                             type="number"
                             min="0"
@@ -279,7 +276,7 @@ const Filter = ({
                         />
                     </label>
                     <label className="flex items-center">
-                        Distance (miles): 
+                        Distance (miles):
                         <input
                             type="number"
                             min="0"
