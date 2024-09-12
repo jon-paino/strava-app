@@ -19,7 +19,7 @@ const defaults = {
 
 export default function StaticMap() {
   return (
-    <div className="w-full h-[60vh] bg-gray-900 p-4">
+    <div className="w-full h-[60vh] bg-gray-950 p-4">
       <MapContainer center={defaults.latlong} zoom={defaults.zoom} style={{ height: '100%', width: '100%' }}>
         {/* Dark-themed map tiles */}
         <TileLayer

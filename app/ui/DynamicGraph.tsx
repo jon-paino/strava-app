@@ -26,7 +26,7 @@ export default function DynamicGraph() {
   }, [])
 
   return (
-    <div className="w-full h-full bg-gray-800 p-3 rounded-lg shadow-lg">
+    <div className="w-full h-full bg-gray-950 p-3 rounded-lg shadow-lg">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />

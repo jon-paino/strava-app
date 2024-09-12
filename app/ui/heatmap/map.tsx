@@ -23,7 +23,7 @@ interface MapProps {
 
 const defaults = {
     latlong: [34.07238006591797, -118.45283509232104] as LatLngExpression,
-    zoom: 19 as number,
+    zoom: 15 as number,
 }
 
 const Map = (props: MapProps) => {
@@ -119,37 +119,40 @@ const Map = (props: MapProps) => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'row', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-            <div style={{ width: '20%', padding: '10px', boxSizing: 'border-box', overflowY: 'auto' }}>
-            <Filter
-                selectedTypes={selectedTypes}
-                onFilterChange={setSelectedTypes}
-                onRunFilterChange={setRunFilters}
-                onRideFilterChange={setRideFilters}
-                onSwimFilterChange={setSwimFilters}
-            />
-            </div>
-            <div style={{ flex: 1, overflow: 'hidden' }}>
-                <MapContainer
-                    center={markerPosition}
-                    zoom={zoom}
-                    scrollWheelZoom={true}
-                    style={{ height: '80%', width: '60%' }}
-                >
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Marker position={markerPosition} draggable={true} eventHandlers={{ dragend: handleDragEnd }}>
-                        <Popup>{`Coordinates: ${markerPosition.lat}, ${markerPosition.lng}`}</Popup>
-                    </Marker>
-
-                    {/* Render a polyline for each activity */}
-                    {activityPolylines.map((polylineCoords, index) => (
-                        <Polyline key={index} positions={polylineCoords} color="blue" weight={4} opacity={0.7} />
-                    ))}
-                </MapContainer>
-            </div>
+        <div style={{ width: '20%', padding: '10px', boxSizing: 'border-box', overflowY: 'auto' }}>
+          <Filter
+            selectedTypes={selectedTypes}
+            onFilterChange={setSelectedTypes}
+            onRunFilterChange={setRunFilters}
+            onRideFilterChange={setRideFilters}
+            onSwimFilterChange={setSwimFilters}
+          />
         </div>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <MapContainer
+            center={markerPosition}
+            zoom={zoom}
+            scrollWheelZoom={true}
+            style={{ height: '80%', width: '60%' }}
+          >
+            {/* Dark-themed map tiles */}
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            />
+            
+            <Marker position={markerPosition} draggable={true} eventHandlers={{ dragend: handleDragEnd }}>
+              <Popup>{`Coordinates: ${markerPosition.lat}, ${markerPosition.lng}`}</Popup>
+            </Marker>
+      
+            {/* Render a polyline for each activity */}
+            {activityPolylines.map((polylineCoords, index) => (
+              <Polyline key={index} positions={polylineCoords} color="#EA580C" weight={4} opacity={0.7} />
+            ))}
+          </MapContainer>
+        </div>
+      </div>
+      
     );
 };
 
