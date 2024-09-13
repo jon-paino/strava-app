@@ -4,7 +4,7 @@ import { loginIsRequiredServer } from "@/app/lib/authOptions";
 export default async function Layout({ children }: { children: React.ReactNode }) {
   await loginIsRequiredServer();
   return (
-    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden bg-black">
       <div className="w-full flex-none md:w-64">
         <SideNav />
       </div>

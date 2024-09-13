@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
@@ -42,10 +43,11 @@ input[type='number']::-webkit-outer-spin-button {
   border-radius: 0.5rem;
   transition: background-color 300ms;
   cursor: pointer;
+  box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.5);
 }
 
 .checkbox-button:hover {
-  background-color: #e2e8f0; /* TailwindCSS slate-200 */
+  background-color: #f6ad55; /* TailwindCSS slate-200 */
 }
 
 .checkbox-button input[type="checkbox"] {

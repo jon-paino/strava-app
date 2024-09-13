@@ -89,17 +89,18 @@ const Filter = ({
 
     return (
         <div className="flex flex-col items-start gap-4">
-            <label className="checkbox-button">
+            <label className="checkbox-button text-white">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('run')}
                     onChange={() => handleCheckboxChange('run')}
+                    className="text-orange-600 focus:ring-orange-600"
                 />
                 Run
             </label>
             {runFiltersVisible && (
                 <div className="flex flex-col gap-4 ml-5">
-                    <label className="flex items-center">
+                    <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Duration (min):
                         <input
                             type="number"
@@ -108,6 +109,7 @@ const Filter = ({
                             value={runFilters.duration || ''}
                             onChange={(e) => handleInputChange('duration', e.target.value, 'run')}
                             className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                            style={{ fontFamily: '"Poppins", sans-serif' }}
                         />
                         <input
                             type="range"
@@ -118,7 +120,8 @@ const Filter = ({
                             className="w-full"
                         />
                     </label>
-                    <label className="flex items-center">
+
+                    <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Speed (mph):
                         <input
                             type="number"
@@ -127,6 +130,7 @@ const Filter = ({
                             value={runFilters.mph || ''}
                             onChange={(e) => handleInputChange('mph', e.target.value, 'run')}
                             className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                            style={{ fontFamily: '"Poppins", sans-serif' }}
                         />
                         <input
                             type="range"
@@ -137,7 +141,7 @@ const Filter = ({
                             className="w-full"
                         />
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Distance (miles):
                         <input
                             type="number"
@@ -146,6 +150,7 @@ const Filter = ({
                             value={runFilters.miles || ''}
                             onChange={(e) => handleInputChange('miles', e.target.value, 'run')}
                             className="w-16 ml-2 mr-4 p-1 border border-gray-300 rounded"
+                            style={{ fontFamily: '"Poppins", sans-serif' }}
                         />
                         <input
                             type="range"
@@ -158,17 +163,18 @@ const Filter = ({
                     </label>
                 </div>
             )}
-            <label className="checkbox-button">
+            <label className="checkbox-button text-white" >
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('ride')}
                     onChange={() => handleCheckboxChange('ride')}
+                    className="text-orange-600 focus:ring-orange-600 "
                 />
                 Ride
             </label>
             {rideFiltersVisible && (
                 <div className="flex flex-col gap-4 ml-5">
-                    <label className="flex items-center">
+                     <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Duration (min):
                         <input
                             type="number"
@@ -187,7 +193,7 @@ const Filter = ({
                             className="w-full"
                         />
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Speed (mph):
                         <input
                             type="number"
@@ -206,7 +212,7 @@ const Filter = ({
                             className="w-full"
                         />
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Distance (miles):
                         <input
                             type="number"
@@ -227,17 +233,18 @@ const Filter = ({
                     </label>
                 </div>
             )}
-            <label className="checkbox-button">
+            <label className="checkbox-button text-white">
                 <input
                     type="checkbox"
                     checked={selectedTypes.includes('swim')}
                     onChange={() => handleCheckboxChange('swim')}
+                    className="text-orange-600 focus:ring-orange-600"
                 />
                 Swim
             </label>
             {swimFiltersVisible && (
                 <div className="flex flex-col gap-4 ml-5">
-                    <label className="flex items-center">
+                     <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Duration (min):
                         <input
                             type="number"
@@ -256,7 +263,7 @@ const Filter = ({
                             className="w-full"
                         />
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Speed (mph):
                         <input
                             type="number"
@@ -275,7 +282,7 @@ const Filter = ({
                             className="w-full"
                         />
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
                         Distance (miles):
                         <input
                             type="number"
@@ -301,4 +308,3 @@ const Filter = ({
 };
 
 export default Filter;
-

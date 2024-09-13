@@ -1,7 +1,6 @@
 import '@/app/ui/global.css';
 import { inter } from '@/app/ui/fonts';
-import SessionWrapper from "./ui/SessionWrapper";
-import { ThemeProvider} from './ui/ThemeProvider';
+import SessionWrapper from './ui/SessionWrapper';
 
 export default function RootLayout({
   children,
@@ -10,19 +9,12 @@ export default function RootLayout({
 }) {
   return (
     <SessionWrapper>
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body className={`${inter.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <html lang="en" suppressHydrationWarning>
+        <head />
+        <body className={`${inter.className} antialiased`}>
           {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  </SessionWrapper>
+        </body>
+      </html>
+    </SessionWrapper>
   );
 }
