@@ -2,6 +2,38 @@
 // It describes the shape of the data, and what data type each property should accept.
 // For simplicity of teaching, we're manually defining these types.
 // However, these types are generated automatically if you're using an ORM such as Prisma.
+
+// Inside /app/lib/definitions.ts or another location in your project
+export interface FormattedActivity {
+  id: string;
+  type: string;
+  distance: number; // In meters
+  duration: number; // In seconds
+  elevation: number; // In meters
+  date: Date; // Activity date
+}
+
+export interface Activity {
+  id: string; // Activity ID
+  userId: string; // User ID
+  name: string | null; // Name of the activity
+  distance: number | null; // Distance of the activity in meters
+  moving_time: number | null; // Moving time in seconds
+  elapsed_time: number | null; // Elapsed time in seconds
+  total_elevation_gain: number | null; // Total elevation gain in meters
+  type: string | null; // Type of activity (e.g., "Run", "Ride")
+  start_date: string | null; // ISO string for start date
+  timezone: string | null; // Timezone of the activity
+  achievement_count: number; // Number of achievements in the activity
+  kudos_count: number; // Number of kudos the activity received
+  comment_count: number; // Number of comments on the activity
+  athlete_count: number; // Number of athletes involved in the activity
+  map?: { // Optional map field containing polyline details
+      summary_polyline: string | null; // Summary polyline
+  } | null; // map field is optional
+}
+
+
 export type User = {
   id: string;
   name: string;

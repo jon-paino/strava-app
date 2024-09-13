@@ -1,53 +1,45 @@
-import AcmeLogo from '@/app/ui/acme-logo';
-import Link from 'next/link';
-import { lusitana } from '@/app/ui/fonts';
-import Image from 'next/image';
-import { GoogleSignInButton, StravaSignInButton } from "./ui/authButtons";
+import Header from './ui/header';
 import { getServerSession } from "next-auth";
 import { authOptions } from "./lib/authOptions";
 import { redirect } from "next/navigation";
+import DynamicGraph from './ui/DynamicGraph';
+import DynamicText from './ui/DynamicText';
+import SignInSection from './ui/SignInSection'; // Import the new SignInSection component
+import DynamicMap from './ui/HomeMap';
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
-  console.log("Session : ", session);
-  if (session) { redirect("/dashboard"); }
-  
+  console.log("Session: ", session);
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
-    <main className="flex min-h-screen flex-col p-6">
-      <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
-        {<AcmeLogo />}
+    <main className="flex min-h-screen flex-col bg-gray-950">
+      {/* Header Section */}
+      <div className="flex h-16 items-center justify-center bg-orange-600 px-4 md:px-6 md:h-20">
+        <Header />
       </div>
-      <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
-          <div
-            className="relative w-0 h-0 border-l-[15px] border-r-[15px] border-b-[26px] border-l-transparent border-r-transparent border-b-black"
-          />
-          <div className="w-full flex flex-col items-center justify-center min-h-screen py-2">
-            <div className="flex flex-col items-center mt-10 p-10 shadow-md">
-              <h1 className="mt-10 mb-4 text-4xl font-bold">Sign In</h1>
-              <StravaSignInButton />
-              <GoogleSignInButton />
-            </div>
+
+      {/* Main Section */}
+      <div className="flex grow flex-col md:flex-row overflow-hidden">
+        {/* Left Section */}
+        <div className="flex flex-col justify-center items-center md:w-2/5 p-6">
+          <div className="w-full max-w-md space-y-12">
+            <DynamicText />
+            <SignInSection />
           </div>
         </div>
-          <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-            {/* Add Hero Images Here */}
-            <Image
-              src="/hero-desktop.png"
-              width={1000}
-              height={760}
-              className="hidden md:block"
-              alt="Screenshots of the dashboard project showing desktop version"
-            />
-            <Image
-              src="/hero-mobile.png"
-              width={560}
-              height={620}
-              className="block md:hidden"
-              alt="Screenshot of the dashboard project showing mobile version"
-            />
+
+        {/* Right Section with Graph */}
+        <div className="flex items-center justify-center md:w-3/5 p-6 ">
+          <div className="w-full max-w-3xl h-[500px] flex flex-col space-y-6 overflow-auto">
+            <DynamicGraph />
+            <DynamicMap />
           </div>
         </div>
+      </div>
     </main>
+
   );
 }
