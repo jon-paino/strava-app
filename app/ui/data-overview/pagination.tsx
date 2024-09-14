@@ -27,7 +27,7 @@ export default function Pagination({
           { 'pointer-events-none text-gray-300': currentPage <= 1 }
         )}
       >
-        <ArrowLeftIcon className="w-4" />
+        <ArrowLeftIcon className="w-4 text-gray-50" />
       </button>
 
       {allPages.map((page, index) => (
@@ -37,8 +37,8 @@ export default function Pagination({
           className={clsx(
             'flex h-10 w-10 items-center justify-center border',
             {
-              'bg-blue-600 text-white': currentPage === page,
-              'hover:bg-gray-100': currentPage !== page && page !== '...',
+              'bg-orange-600 text-white': currentPage === page,
+              'hover:bg-orange-300 text-white': currentPage !== page && page !== '...',
               'text-gray-300 pointer-events-none': page === '...',
             }
           )}
@@ -55,7 +55,7 @@ export default function Pagination({
           { 'pointer-events-none text-gray-300': currentPage >= totalPages }
         )}
       >
-        <ArrowRightIcon className="w-4" />
+        <ArrowRightIcon className="w-4 text-gray-50" />
       </button>
     </div>
   );
