@@ -13,6 +13,7 @@ This project is a Next.js web application that integrates with the Strava API to
 ## Tech Stack
 
 - **Next.js (App Router)**: Framework for building the frontend with server-side rendering and API routes.
+- **PostgreSQL**: Database engine for storing user and activity data
 - **Strava API**: Fetches workout data from Strava for authenticated users.
 - **React Leaflet**: Library for rendering the interactive map and displaying workout routes.
 - **NextAuth.js**: Handles authentication with Strava and Google OAuth providers.
@@ -113,4 +114,8 @@ The app includes filter options, allowing users to customize their view:
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+
+<img width="1000" alt="Screenshot 2024-09-14 at 1 01 44 PM" src="https://github.com/user-attachments/assets/172e144e-e123-4860-b210-b89810ede85d">
+<img width="1000" alt="Screenshot 2024-09-14 at 12 42 32 PM" src="https://github.com/user-attachments/assets/1fae7f7e-9412-4524-9400-df001bc06ae0">
+<img width="1000" alt="Screenshot 2024-09-14 at 1 01 11 PM" src="https://github.com/user-attachments/assets/0ccdf2f1-3a52-4095-818b-a9849c739b2c">
 
