@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
-import Search from '@/app/ui/search';
 import { FormattedActivity } from '@/app/lib/definitions';
 import { useSession } from 'next-auth/react';
 
@@ -13,25 +12,7 @@ export default function AthleteActivityTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl text-white`}>
-        {session?.user?.name}'s Activities
-      </h1>
-      <div className="flex items-center gap-3 mb-6 text-white">
-        {/* Conditionally render the Image component if the image URL exists */}
-        {session?.user?.image ? (
-          <Image
-            src={session.user.image}
-            alt={`${session?.user?.name}'s profile picture`}
-            className="rounded-full"
-            width={50}
-            height={50}
-          />
-        ) : (
-          <div className="rounded-full bg-gray-300" style={{ width: 50, height: 50 }} />
-        )}
-        <p className="text-lg">{session?.user?.name}</p>
-      </div>
-      <Search placeholder="Search activities..." />
+      
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">

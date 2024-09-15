@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import AthleteActivityTable from "@/app/ui/data-overview/table";
 import { getActivities } from "@/app/lib/client_actions";
 import { useSession } from 'next-auth/react';
 import { Activity, FormattedActivity } from '@/app/lib/definitions';
 import Pagination from '@/app/ui/data-overview/pagination';
+import Search from '@/app/ui/search';
+import Image from 'next/image';
 
 export default function Page() {
   const { data: session, status } = useSession();
@@ -13,7 +15,9 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;  // Number of items per page
+  const itemsPerPage = 10; // Number of items per page
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -23,12 +27,10 @@ export default function Page() {
         const userId = session?.stravaId as number | undefined;
         if (!userId) return;
         const response = await fetch(`/api/activities?userId=${userId}`);
-        const result = await response.json(); // Assuming the API response is an object like { activities: [...] }
+        const result = await response.json();
 
-        // Check if the activities field exists and is an array
         const rawActivities = result.activities;
 
-        // Map the raw activity data to FormattedActivity structure
         const formattedActivities = rawActivities.map((activity: any) => ({
           id: activity.id,
           type: activity.type,
@@ -37,7 +39,10 @@ export default function Page() {
           elevation: activity.total_elevation_gain,
           date: new Date(activity.start_date),
         }));
-        const sortedActivities = formattedActivities.sort((a: FormattedActivity, b: FormattedActivity) => b.date.getTime() - a.date.getTime());
+        const sortedActivities = formattedActivities.sort(
+          (a: FormattedActivity, b: FormattedActivity) =>
+            b.date.getTime() - a.date.getTime()
+        );
 
         setActivities(sortedActivities);
         setIsLoading(false);
@@ -53,27 +58,80 @@ export default function Page() {
     }
   }, [session, status]);
 
-  if (status === 'loading') return <p>Loading session...</p>;
-  if (isLoading) return <p>Loading activities...</p>;
-  if (error) return <p>{error}</p>;
+  const filteredActivities = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return activities.filter((activity) => {
+      const type = activity.type?.toLowerCase() ?? '';
+      const distance = activity.distance?.toString() ?? '';
+      const duration = activity.duration?.toString() ?? '';
+      const elevation = activity.elevation?.toString() ?? '';
+      const dateStr =
+        activity.date
+          ?.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+          .toLowerCase() ?? '';
+  
+      return (
+        type.includes(query) ||
+        distance.includes(query) ||
+        duration.includes(query) ||
+        elevation.includes(query) ||
+        dateStr.includes(query)
+      );
+    });
+  }, [activities, searchQuery]);
 
-  // Calculate total pages based on the number of activities and items per page
-  const totalPages = Math.ceil(activities.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
 
-  // Get the activities for the current page
-  const paginatedActivities = activities.slice(
+  const paginatedActivities = filteredActivities.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  // Conditional rendering happens after hooks
+  if (status === 'loading') return <p>Loading session...</p>;
+  if (isLoading) return <p>Loading activities...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div>
-      <AthleteActivityTable activities={paginatedActivities} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
+  <div className="flex items-center gap-3 mb-6 text-white">
+    {/* Conditionally render the Image component if the image URL exists */}
+    {session?.user?.image ? (
+      <Image
+        src={session.user.image}
+        alt={`${session?.user?.name}'s profile picture`}
+        className="rounded-full"
+        width={50}
+        height={50}
       />
-    </div>
+    ) : (
+      <div className="rounded-full bg-gray-300" style={{ width: 50, height: 50 }} />
+    )}
+    <p className="text-lg">{`${session?.user?.name}'s Activities`}</p>
+  </div>
+  <Search
+    placeholder="Search activities..."
+    value={searchQuery}
+    onChange={setSearchQuery}
+  />
+  {paginatedActivities.length > 0 ? (
+    <AthleteActivityTable activities={paginatedActivities} />
+  ) : (
+    <p className="text-white mt-4">No activities found.</p>
+  )}
+  <Pagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    onPageChange={(page) => setCurrentPage(page)}
+  />
+</div>
   );
 }
