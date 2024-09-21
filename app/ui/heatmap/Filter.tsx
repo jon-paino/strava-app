@@ -117,7 +117,7 @@ const Filter = ({
                             max="300"
                             value={runFilters.duration || 0}
                             onChange={(e) => handleSliderChange('duration', Number(e.target.value), 'run')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
 
@@ -138,7 +138,7 @@ const Filter = ({
                             max="20"
                             value={runFilters.mph || 0}
                             onChange={(e) => handleSliderChange('mph', Number(e.target.value), 'run')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                     <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
@@ -158,7 +158,7 @@ const Filter = ({
                             max="50"
                             value={runFilters.miles || 0}
                             onChange={(e) => handleSliderChange('miles', Number(e.target.value), 'run')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                 </div>
@@ -190,7 +190,7 @@ const Filter = ({
                             max="300"
                             value={rideFilters.duration || 0}
                             onChange={(e) => handleSliderChange('duration', Number(e.target.value), 'ride')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                     <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
@@ -209,7 +209,7 @@ const Filter = ({
                             max="20"
                             value={rideFilters.mph || 0}
                             onChange={(e) => handleSliderChange('mph', Number(e.target.value), 'ride')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                     <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
@@ -228,7 +228,7 @@ const Filter = ({
                             max="50"
                             value={rideFilters.miles || 0}
                             onChange={(e) => handleSliderChange('miles', Number(e.target.value), 'ride')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                 </div>
@@ -260,7 +260,7 @@ const Filter = ({
                             max="300"
                             value={swimFilters.duration || 0}
                             onChange={(e) => handleSliderChange('duration', Number(e.target.value), 'swim')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                     <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
@@ -279,7 +279,7 @@ const Filter = ({
                             max="20"
                             value={swimFilters.mph || 0}
                             onChange={(e) => handleSliderChange('mph', Number(e.target.value), 'swim')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                     <label className="flex items-center text-white font-bold" style={{ fontFamily: '"Poppins", sans-serif' }}>
@@ -298,7 +298,7 @@ const Filter = ({
                             max="50"
                             value={swimFilters.miles || 0}
                             onChange={(e) => handleSliderChange('miles', Number(e.target.value), 'swim')}
-                            className="w-full"
+                            className="w-full accent-orange-600"
                         />
                     </label>
                 </div>
