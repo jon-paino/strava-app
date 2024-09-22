@@ -1,3 +1,4 @@
+https://strava-app-lime.vercel.app
 # Strava Activity Dashboard - Next.js App Router
 
 This project is a Next.js web application that integrates with the Strava API to display and filter fitness activities. The app allows users to authenticate with Strava, fetch their activities, and view them on an interactive map using React Leaflet. Additionally, the app features an activity table component with filtering and pagination support. (Goal of final implementation is to use a ML algorithm [I'm thinking KNN will be most effective] to give an estimate of a workout performance after importing GPX route file, location, and time of day the activity will take place)
