@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 import GoogleProvider from "next-auth/providers/google";
 import StravaProvider from "next-auth/providers/strava";
 import { Client } from 'pg';
-import { fetchStravaUserData, updateStravaUserData } from './actions';
-import { insertActivitiesIntoDatabase, insertNewActivitiesIntoDatabase } from "./actions";
-import { getActivities } from "./client_actions";
+import { insertActivitiesIntoDatabase, fetchStravaUserData, updateStravaUserData } from "./actions";
+import { getActivities, getNewActivities } from "./client_actions";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -44,9 +43,10 @@ export const authOptions: NextAuthOptions = {
 
           // Check if the user exists in the database using Strava's id
           const user = await client.query(
-            `SELECT id FROM strava.users WHERE id = $1`,
+            `SELECT id, last_synced_at FROM strava.users WHERE id = $1`,
             [stravaId]
           );
+          console.log('User:', user.rows);
           if (user.rows.length === 0) {
             // If user doesn't exist, insert them into the database
             await client.query(
@@ -65,12 +65,15 @@ export const authOptions: NextAuthOptions = {
               console.error('Error: Access token is undefined.');
             }
           } else {
+            const lastSyncedAt = user.rows[0].last_synced_at;
+            console.log('Last synced at:', lastSyncedAt);
             // If user exists, update their tokens and activities
             if (account.access_token) {
-              const activities = await getActivities(account.access_token);
-              await insertNewActivitiesIntoDatabase(activities, stravaId);
+              const newActivities = await getNewActivities(account.access_token, lastSyncedAt);
+              console.log(`Fetched ${newActivities.length} new activities.`);
+              await insertActivitiesIntoDatabase(newActivities, stravaId);
             }
-          
+
             await client.query(
               `UPDATE strava.users
                SET access_token = $1,

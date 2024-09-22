@@ -10,47 +10,70 @@ export async function insertActivitiesIntoDatabase(activities: any[], userId: nu
   try {
     await client.connect();
 
-    const insertPromises = activities.map(async (activity) => {
-      // Check if activity already exists
-      const existingActivity = await client.query(
-        'SELECT id FROM strava.activities WHERE id = $1',
-        [activity.id]
-      );
+    // Step 1: Get the IDs of the activities to process
+    const activityIds = activities.map((activity) => activity.id);
 
-      if (existingActivity.rows.length === 0) {
-        // Insert new activity
-        return client.query(
-          `INSERT INTO strava.activities (
-            id, user_id, name, distance, moving_time, elapsed_time, total_elevation_gain,
-            type, start_date, timezone, achievement_count, kudos_count, comment_count, athlete_count, summary_polyline
-          ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
-          )`,
-          [
-            activity.id,
-            userId,
-            activity.name || null,
-            activity.distance || null,
-            activity.moving_time || null,
-            activity.elapsed_time || null,
-            activity.total_elevation_gain || null,
-            activity.type || null,
-            activity.start_date || null,
-            activity.timezone || null,
-            activity.achievement_count || 0,
-            activity.kudos_count || 0,
-            activity.comment_count || 0,
-            activity.athlete_count || 0,
-            activity.map?.summary_polyline || null
-          ]
-        );
-      } else {
-        console.log(`Activity with id ${activity.id} already exists.`);
-        return null;
+    // Step 2: Retrieve existing activity IDs from the database
+    const res = await client.query(
+      'SELECT id FROM strava.activities WHERE id = ANY($1)',
+      [activityIds]
+    );
+    const existingIds = new Set(res.rows.map((row) => row.id));
+
+    // Step 3: Filter out activities that already exist
+    const newActivities = activities.filter(
+      (activity) => !existingIds.has(activity.id)
+    );
+
+    if (newActivities.length === 0) {
+      console.log('No new activities to insert.');
+      return;
+    }
+
+    // Step 4: Prepare data for batch insertion with conflict handling
+    const numFields = 15;
+    const values: any[] = [];
+    const valuePlaceholders: string[] = [];
+    let paramIndex = 1;
+
+    newActivities.forEach((activity) => {
+      const placeholders = [];
+      for (let j = 0; j < numFields; j++) {
+        placeholders.push(`$${paramIndex}`);
+        paramIndex++;
       }
+      valuePlaceholders.push(`(${placeholders.join(', ')})`);
+
+      values.push(
+        activity.id,
+        userId,
+        activity.name || null,
+        activity.distance || null,
+        activity.moving_time || null,
+        activity.elapsed_time || null,
+        activity.total_elevation_gain || null,
+        activity.type || null,
+        activity.start_date || null,
+        activity.timezone || null,
+        activity.achievement_count || 0,
+        activity.kudos_count || 0,
+        activity.comment_count || 0,
+        activity.athlete_count || 0,
+        activity.map?.summary_polyline || null
+      );
     });
 
-    await Promise.all(insertPromises);  // Wait for all insertions to complete
+    // Step 5: Perform batch insertion with conflict handling
+    const queryText = `
+      INSERT INTO strava.activities (
+        id, user_id, name, distance, moving_time, elapsed_time, total_elevation_gain,
+        type, start_date, timezone, achievement_count, kudos_count, comment_count, athlete_count, summary_polyline
+      ) VALUES ${valuePlaceholders.join(', ')}
+      ON CONFLICT (id) DO NOTHING
+    `;
+
+    await client.query(queryText, values);
+    console.log(`Inserted ${newActivities.length} new activities.`);
   } catch (error) {
     console.error('Error inserting activities:', error);
     throw error;
@@ -58,6 +81,7 @@ export async function insertActivitiesIntoDatabase(activities: any[], userId: nu
     await client.end();
   }
 }
+
 
 export async function insertNewActivitiesIntoDatabase(activities: any[], userId: number) {
   const client = new Client({
